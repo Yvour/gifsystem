@@ -51,13 +51,10 @@ app.get("/query/:search", function(req, res) {
     .then(response => response.json())
 
     .then(response => {
-    
-
       res.set("Content-Type", "application/json");
       res.send(response.data);
     })
     .catch(e => {
-    
       res.send([]);
     });
 });
