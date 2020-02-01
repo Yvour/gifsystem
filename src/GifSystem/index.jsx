@@ -1,4 +1,5 @@
 import React from "react";
+import "./styles.css";
 
 const EMPTY_ANSWER = [];
 const SEND_INTERVAL = 1000;
@@ -42,10 +43,27 @@ class GifSystem extends React.Component {
       );
   }
 
+  renderGiphyImage(imageData) {
+    const sizedImage = imageData.images.fixed_height_downsampled;
+    console.log("sizedImage");
+    console.log(sizedImage);
+    return (
+      <div
+        style={{
+          backgroundImage: `url(${sizedImage.url})`,
+          height: sizedImage.height,
+          width: sizedImage.width
+        }}
+      />
+    );
+  }
+
   renderGiphyImages() {
     return (
-      <div>
-        <pre>{JSON.stringify(this.state.giphyImages, null, 2)}</pre>
+      <div className="giphy-images-container">
+        {this.state.giphyImages.map(imageData =>
+          this.renderGiphyImage(imageData)
+        )}
       </div>
     );
   }
@@ -54,14 +72,13 @@ class GifSystem extends React.Component {
     return (
       <input
         className="search-input"
-        placeholder="Enter string to search in Wikipeda..."
+        placeholder="Enter query..."
         onChange={e => {
           const value = e.target.value;
           this.setState(
             Object.assign(this.state, {
               search: value,
-              giphyImages:
-                value && value.length ? this.state.results : EMPTY_ANSWER
+              giphyImages: EMPTY_ANSWER
             })
           );
           if (value && value.length) {
@@ -75,10 +92,12 @@ class GifSystem extends React.Component {
   render() {
     console.log(this.state);
     return (
-      <div>
-        Gif System
+      <div className="gif-system">
+        <div className="gif-system-name">Gif System</div>
         {this.renderSearchInput()}
-        {this.renderGiphyImages()}
+        <div className="search-result-container">
+          {this.renderGiphyImages()}
+        </div>
       </div>
     );
   }

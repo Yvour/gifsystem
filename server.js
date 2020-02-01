@@ -41,7 +41,7 @@ function postData(url = "", data = {}) {
 app.get("/query/:search", function(req, res) {
   const search = req.params.search;
   console.log("search is " + search);
-  const LIMIT = 2;
+  const LIMIT = 25;
   const url =
     `https://api.giphy.com/v1/gifs/search?api_key=LIV6p4WeGnQd1WVhf3CQb1lWBl6zAEOW&q=${encodeURIComponent(
       search
