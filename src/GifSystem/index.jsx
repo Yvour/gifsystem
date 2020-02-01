@@ -1,52 +1,86 @@
 import React from "react";
 import "./styles.css";
+import _ from "lodash";
 
 const EMPTY_ANSWER = [];
 const SEND_INTERVAL = 1000;
 
+const SOURCES = { PIXABAY: "PIXABAY", GIPHY: "GIPHY" };
+
+const URLS = {
+  [SOURCES.PIXABAY]: "query-pixabay",
+  [SOURCES.GIPHY]: "query-giphy"
+};
+
 class GifSystem extends React.Component {
   constructor() {
     super();
+    const images = {};
+
+    Object.keys(SOURCES).forEach(key => {
+      images[SOURCES[key]] = {
+        lastSent: new Date().valueOf(),
+        items: [],
+        query: ""
+      };
+    });
     this.state = {
-      giphyLastSent: new Date().valueOf(),
-      giphyImages: EMPTY_ANSWER,
       search: "",
-      count: 0
+      images
     };
+
+    this.getAllImages = _.debounce(this.getAllImages);
+    this.getImages = this.getImages.bind(this);
   }
 
-  getGiphyImages() {
+  getImages(source) {
     const search = this.state.search;
+    console.log("source is");
+    console.log(source);
+    console.log(this.state);
+    const currSearch = this.state.images[source].query;
 
-    const giphyImagesQuery = this.state.giphyImagesQuery;
-    const timeDifference = new Date().valueOf() - this.state.giphyLastSent;
-    if (timeDifference > SEND_INTERVAL && giphyImagesQuery !== search) {
+    const timeDifference =
+      new Date().valueOf() - this.state.images[source].lastSent;
+    if (timeDifference > SEND_INTERVAL && currSearch !== search) {
       this.setState(
-        {
-          giphyLastSent: new Date().valueOf()
-        },
+        state => ({
+          images: {
+            ...state.images,
+            [source]: {
+              items: EMPTY_ANSWER,
+              lastSent: new Date().valueOf(),
+              query: search
+            }
+          }
+        }),
         () => {
-          fetch(`query/${search}`)
+          fetch(`${URLS[source]}/${search}`)
             .then(response => response.json())
             .then(result => {
-              this.setState({
-                giphyImagesQuery: search,
-                giphyImages: result
-              });
+              this.setState(state => ({
+                images: {
+                  ...state.images,
+                  [source]: {
+                    ...state.images[source],
+                    items: result
+                  }
+                }
+              }));
             });
         }
       );
     } else
-      setTimeout(
-        this.getGiphyImages.bind(this),
-        SEND_INTERVAL - timeDifference
-      );
+      setTimeout(() => {
+        console.log("timout call for " + search);
+        console.log(this.state);
+        this.getImages(source);
+      }, SEND_INTERVAL - timeDifference);
   }
 
   renderGiphyImage(imageData) {
     const sizedImage = imageData.images.fixed_height_downsampled;
-    console.log("sizedImage");
-    console.log(sizedImage);
+
     return (
       <div
         style={{
@@ -61,11 +95,16 @@ class GifSystem extends React.Component {
   renderGiphyImages() {
     return (
       <div className="giphy-images-container">
-        {this.state.giphyImages.map(imageData =>
+        {this.state.images[SOURCES.GIPHY].items.map(imageData =>
           this.renderGiphyImage(imageData)
         )}
       </div>
     );
+  }
+
+  getAllImages() {
+    console.log("getall for " + this.state.search);
+    Object.keys(SOURCES).forEach(key => this.getImages(SOURCES[key]));
   }
 
   renderSearchInput() {
@@ -75,22 +114,17 @@ class GifSystem extends React.Component {
         placeholder="Enter query..."
         onChange={e => {
           const value = e.target.value;
-          this.setState(
-            Object.assign(this.state, {
-              search: value,
-              giphyImages: EMPTY_ANSWER
-            })
-          );
-          if (value && value.length) {
-            this.getGiphyImages();
-          }
+          this.setState({ search: value }, () => {
+            if (value && value.length) {
+              this.getAllImages();
+            }
+          });
         }}
       />
     );
   }
 
   render() {
-    console.log(this.state);
     return (
       <div className="gif-system">
         <div className="gif-system-name">Gif System</div>

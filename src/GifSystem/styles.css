@@ -33,5 +33,7 @@ width: 100%;
 .giphy-images-container{
 	display: flex;
 	align-items: center;
+	flex-wrap: wrap;
+	justify-content: center;
 	border: 1px solid blue;
 }
