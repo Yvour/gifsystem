@@ -1,0 +1,57 @@
+{
+  "name": "gifsystem",
+  "version": "1.0.0",
+  "description": "Gif search/process system",
+  "main": "index.js",
+  "scripts": {
+    "test": "test.js",
+    "compile": "webpack",
+    "build": "webpack -p",
+    "start": "node server.js",
+    "pretty": "prettier --write \"./**/*.{js,jsx,json}\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yvour/gifsystem.git"
+  },
+  "keywords": [
+    "gif",
+    "system",
+    "git",
+    "npm",
+    "react"
+  ],
+  "author": "I. Urvanov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Yvour/gifsystem/issues"
+  },
+  "homepage": "https://github.com/Yvour/gifsystem#readme",
+  "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.5.0",
+    "babel-jest": "^24.9.0",
+    "jest": "24.8.0",
+    "prettier": "1.18.2"
+  },
+  "jest": {
+    "verbose": true,
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    },
+    "globals": {
+      "NODE_ENV": "test"
+    },
+    "moduleFileExtensions": [
+      "js",
+      "jsx"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "src/frontend",
+      "src/shared"
+    ]
+  },
+  "dependencies": {
+    "lodash": "^4.17.15"
+  }
+}
