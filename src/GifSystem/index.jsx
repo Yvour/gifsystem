@@ -156,27 +156,28 @@ class GifSystem extends React.Component {
 
   renderSearchInput() {
     return (
-      <input
-        className="search-input"
-        placeholder="Enter query..."
-        onChange={e => {
-          const value = e.target.value;
-          this.setState({ search: value }, () => {
-            if (value && value.length) {
-              this.getAllImages();
-            }
-          });
-        }}
-      />
+      <div className="search-input-container">
+        <input
+          className="search-input"
+          placeholder="Enter query..."
+          onChange={e => {
+            const value = e.target.value;
+            this.setState({ search: value }, () => {
+              if (value && value.length) {
+                this.getAllImages();
+              }
+            });
+          }}
+        />
+      </div>
     );
   }
 
   render() {
     return (
       <div className="gif-system">
-        <div className="gif-system-name">Gif System</div>
         {this.renderSearchInput()}
-        <div className="search-result-container">{this.renderImages()}</div>
+        {this.renderImages()}
       </div>
     );
   }
