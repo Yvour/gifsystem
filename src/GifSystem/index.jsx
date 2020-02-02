@@ -1,6 +1,10 @@
 import React from "react";
 import "./styles.css";
-import _ from "lodash";
+
+import { requester } from "./../requester";
+import { delayer } from "./../delayer";
+import { getTimeDifference } from "./../getTimeDifference";
+import { debounce } from "./../debounce";
 
 const EMPTY_ANSWER = [];
 const SEND_INTERVAL = 1000;
@@ -29,7 +33,7 @@ class GifSystem extends React.Component {
       images
     };
 
-    this.getAllImages = _.debounce(this.getAllImages);
+    this.getAllImages = debounce(this.getAllImages, 600);
     this.getImages = this.getImages.bind(this);
   }
 
@@ -38,8 +42,10 @@ class GifSystem extends React.Component {
 
     const currSearch = this.state.images[source].query;
 
-    const timeDifference =
-      new Date().valueOf() - this.state.images[source].lastSent;
+    const timeDifference = getTimeDifference(
+      this.state.images[source].lastSent
+    );
+
     if (timeDifference > SEND_INTERVAL && currSearch !== search) {
       this.setState(
         state => ({
@@ -53,7 +59,7 @@ class GifSystem extends React.Component {
           }
         }),
         () => {
-          fetch(`${URLS[source]}/${search}`)
+          requester(`${URLS[source]}/${search}`)
             .then(response => response.json())
             .then(result => {
               this.setState(state => ({
@@ -69,7 +75,7 @@ class GifSystem extends React.Component {
         }
       );
     } else
-      setTimeout(() => {
+      delayer(() => {
         this.getImages(source);
       }, SEND_INTERVAL - timeDifference);
   }
@@ -77,6 +83,7 @@ class GifSystem extends React.Component {
   renderPixabayImage(imageData) {
     return (
       <div
+        className="pixabay-image"
         style={{
           backgroundImage: `url(${imageData.previewURL})`,
           height: imageData.previewHeight,
@@ -91,6 +98,7 @@ class GifSystem extends React.Component {
 
     return (
       <div
+        className="giphy-image"
         style={{
           backgroundImage: `url(${sizedImage.url})`,
           height: sizedImage.height,
