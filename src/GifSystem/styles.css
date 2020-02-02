@@ -1,39 +1,40 @@
-
-.gif-system{
-	width:100vw;
-	font-size:5vh;
-	display: flex;
-	flex-direction: column;
-	
-	
+.gif-system {
+  width: 100vw;
+  font-size: 5vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.gif-system div{
-	width:100%;
-	text-align: center;
+.gif-system div {
+  width: 100%;
+  text-align: center;
 }
 
-.search-input{
-  width:100%;
-  font-size:5vh;
-  heihgt: 5vh;
+.search-input {
+  width: 100%;
+  font-size: 5vh;
+  height: 5vh;
   border: 1px solid green;
-  
 }
 
 .search-result-container {
   display: flex;
-width: 100%;
+  width: 100%;
+  min-height: 90vh;
   flex-direction: column;
   background-color: transparent;
   border: 1px solid cian;
 }
 
+.images-container {
+  background-color: lightgray;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  min-height: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
 
-.giphy-images-container{
-	display: flex;
-	align-items: center;
-	flex-wrap: wrap;
-	justify-content: center;
-	border: 1px solid blue;
+  justify-content: space-between;
+  border: 1px solid blue;
 }

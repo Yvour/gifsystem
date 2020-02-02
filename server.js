@@ -42,8 +42,6 @@ app.get("/query-pixabay/:search", function(req, res) {
   const KEY = "15109459-ccff9a366d104475a924cc43e";
   const search = (req.params.search || "").split(/\s+/).join("+");
 
-  console.log("pixabay search is " + search);
-  const LIMIT = 25;
   const url = `https://pixabay.com/api/?key=${KEY}&q=${search}`;
   fetch(url)
     .then(response => response.json())
@@ -61,9 +59,9 @@ app.get("/query-giphy/:search", function(req, res) {
   console.log("giphy search is " + search);
   const LIMIT = 25;
   const url =
-    `https://api.giphy.com/v1/gifs/search?api_key=LIV6p4WeGnQd1WVhf3CQb1lWBl6zAEOW&q=${encodeURIComponent(
-      search
-    )}` + `&limit=${LIMIT}&offset=0&rating=G&lang=en`;
+    `https://api.giphy.com/v1/gifs/search?` +
+    `api_key=LIV6p4WeGnQd1WVhf3CQb1lWBl6zAEOW&q=${encodeURIComponent(search)}` +
+    `&limit=${LIMIT}&offset=0&rating=G&lang=en`;
 
   fetch(url)
     .then(response => response.json())

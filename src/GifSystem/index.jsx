@@ -35,9 +35,7 @@ class GifSystem extends React.Component {
 
   getImages(source) {
     const search = this.state.search;
-    console.log("source is");
-    console.log(source);
-    console.log(this.state);
+
     const currSearch = this.state.images[source].query;
 
     const timeDifference =
@@ -72,10 +70,20 @@ class GifSystem extends React.Component {
       );
     } else
       setTimeout(() => {
-        console.log("timout call for " + search);
-        console.log(this.state);
         this.getImages(source);
       }, SEND_INTERVAL - timeDifference);
+  }
+
+  renderPixabayImage(imageData) {
+    return (
+      <div
+        style={{
+          backgroundImage: `url(${imageData.previewURL})`,
+          height: imageData.previewHeight,
+          width: imageData.previewWidth
+        }}
+      />
+    );
   }
 
   renderGiphyImage(imageData) {
@@ -92,18 +100,57 @@ class GifSystem extends React.Component {
     );
   }
 
-  renderGiphyImages() {
+  getMixedImages() {
+    const SHOW_COUNT = 40;
+    const images = [];
+    Object.keys(SOURCES).forEach(key => {
+      const sourceImages = this.state.images[SOURCES[key]].items.map(
+        imageData => ({
+          source: SOURCES[key],
+          imageData: imageData
+        })
+      );
+      images.push(sourceImages);
+    });
+    const mixedImages = [];
+
+    let index = 0;
+    let count = 0;
+    while (images.length && mixedImages.length < SHOW_COUNT) {
+      count++;
+
+      if (images[index].length) {
+        mixedImages.push(images[index].shift());
+        index++;
+      } else {
+        images.splice(index, 1);
+      }
+      index = index % images.length;
+    }
+
+    return mixedImages;
+  }
+
+  renderImages() {
+    const images = this.getMixedImages();
+
     return (
-      <div className="giphy-images-container">
-        {this.state.images[SOURCES.GIPHY].items.map(imageData =>
-          this.renderGiphyImage(imageData)
-        )}
+      <div className="images-container">
+        {images.map(image => {
+          switch (image.source) {
+            case SOURCES.GIPHY:
+              return this.renderGiphyImage(image.imageData);
+            case SOURCES.PIXABAY:
+              return this.renderPixabayImage(image.imageData);
+            default:
+              return null;
+          }
+        })}
       </div>
     );
   }
 
   getAllImages() {
-    console.log("getall for " + this.state.search);
     Object.keys(SOURCES).forEach(key => this.getImages(SOURCES[key]));
   }
 
@@ -129,9 +176,7 @@ class GifSystem extends React.Component {
       <div className="gif-system">
         <div className="gif-system-name">Gif System</div>
         {this.renderSearchInput()}
-        <div className="search-result-container">
-          {this.renderGiphyImages()}
-        </div>
+        <div className="search-result-container">{this.renderImages()}</div>
       </div>
     );
   }
