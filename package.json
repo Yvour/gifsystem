@@ -4,7 +4,7 @@
   "description": "Gif search/process system",
   "main": "index.js",
   "scripts": {
-    "test": "test.js",
+    "test": "jest",
     "compile": "webpack",
     "build": "webpack -p",
     "start": "node server.js",
@@ -32,13 +32,18 @@
     "@babel/plugin-transform-modules-commonjs": "^7.5.0",
     "@babel/preset-env": "^7.8.4",
     "babel-jest": "^24.9.0",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.2",
     "jest": "24.8.0",
+    "jest-css-modules": "^2.1.0",
+    "jest-css-modules-transform": "^4.0.0",
     "prettier": "1.18.2"
   },
   "jest": {
     "verbose": true,
     "transform": {
-      "^.+\\.js$": "babel-jest"
+      "^.+\\.jsx?$": "babel-jest",
+      "^.+\\.(css|scss|less)$": "<rootDir>/node_modules/jest-css-modules-transform"
     },
     "globals": {
       "NODE_ENV": "test"
@@ -49,8 +54,10 @@
     ],
     "moduleDirectories": [
       "node_modules",
-      "src/frontend",
-      "src/shared"
+      "src"
+    ],
+    "setupFilesAfterEnv": [
+      "./jest.setup.js"
     ]
   },
   "dependencies": {
