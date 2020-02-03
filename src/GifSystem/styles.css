@@ -1,5 +1,4 @@
 .gif-system {
-  width: 100%;
   font-size: 5vh;
   display: flex;
   flex-direction: column;
@@ -9,11 +8,11 @@ body {
 }
 
 .gif-system div {
-  width: 100%;
   text-align: center;
 }
 
 .search-input {
+  width: 70%;
   font-size: 5vh;
   height: 5vh;
   border: 1px solid green;
@@ -32,6 +31,7 @@ body {
   align-items: center;
   flex-wrap: wrap;
   min-height: 90vh;
+  height: 90vh;
 
   overflow-y: auto;
 
