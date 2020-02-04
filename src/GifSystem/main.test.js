@@ -530,18 +530,15 @@ const mockedPixabayAnswer = [
 
 jest.mock("./../requester", () => ({
   requester: function(url) {
-    switch (url) {
-      case "query-pixabay/Moon":
-        return Promise.resolve({
-          json: () => Promise.resolve(mockedPixabayAnswer)
-        });
-      case "query-giphy/Moon":
-        return Promise.resolve({
-          json: () => Promise.resolve(mockedGiphyAnswer)
-        });
-      default:
-        throw new Error("Unknown url " + url + " used during test");
-    }
+    return Promise.resolve({
+      json: () =>
+        Promise.resolve([
+          mockedPixabayAnswer[0],
+          mockedGiphyAnswer[0],
+          mockedPixabayAnswer[1],
+          mockedGiphyAnswer[1]
+        ])
+    });
   }
 }));
 
