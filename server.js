@@ -2,11 +2,22 @@ const express = require("express");
 const webpackDevMiddleware = require("webpack-dev-middleware");
 const webpack = require("webpack");
 const webpackConfig = require("./webpack.config.js");
+
 const app = express();
 const fetch = require("node-fetch");
 
-const compiler = webpack(webpackConfig);
+require("dotenv-json")();
 
+const SOURCES = ["PIXABAY", "GIPHY"];
+console.log(process.env);
+const API_KEYS = {};
+SOURCES.forEach(source => {
+  API_KEYS[source] = process.env[`API_KEYS_${source}`];
+});
+
+console.log(JSON.stringify(API_KEYS, null, 2));
+
+const compiler = webpack(webpackConfig);
 app.use(
   webpackDevMiddleware(compiler, {
     hot: true,
@@ -22,10 +33,11 @@ app.use(
 app.use(express.static(__dirname + "/www"));
 
 app.get("/query-pixabay/:search", function(req, res) {
-  const KEY = "15109459-ccff9a366d104475a924cc43e";
+  const KEY = API_KEYS.PIXABAY;
   const search = (req.params.search || "").split(/\s+/).join("+");
+  const LIMIT = 25;
 
-  const url = `https://pixabay.com/api/?key=${KEY}&q=${search}`;
+  const url = `https://pixabay.com/api/?key=${KEY}&q=${search}&per_page=${LIMIT}`;
   fetch(url)
     .then(response => response.json())
     .then(response => {
@@ -39,11 +51,13 @@ app.get("/query-pixabay/:search", function(req, res) {
 
 app.get("/query-giphy/:search", function(req, res) {
   const search = (req.params.search || "").split(/\s+/).join("+");
-  console.log("giphy search is " + search);
+
+  const KEY = API_KEYS.GIPHY;
+
   const LIMIT = 25;
   const url =
     `https://api.giphy.com/v1/gifs/search?` +
-    `api_key=LIV6p4WeGnQd1WVhf3CQb1lWBl6zAEOW&q=${encodeURIComponent(search)}` +
+    `api_key=${KEY}&q=${encodeURIComponent(search)}` +
     `&limit=${LIMIT}&offset=0&rating=G&lang=en`;
 
   fetch(url)

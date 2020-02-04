@@ -5,11 +5,10 @@ import { requester } from "./../requester";
 import { delayer } from "./../delayer";
 import { getTimeDifference } from "./../getTimeDifference";
 import { debounce } from "./../debounce";
+import { SOURCES } from "./../const";
 
 const EMPTY_ANSWER = [];
 const SEND_INTERVAL = 1000;
-
-const SOURCES = { PIXABAY: "PIXABAY", GIPHY: "GIPHY" };
 
 const URLS = {
   [SOURCES.PIXABAY]: "query-pixabay",
