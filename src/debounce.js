@@ -1,3 +1,2 @@
-import _ from "lodash";
-
-export const debounce = _.debounce;
+import { useDebounce } from "use-debounce";
+export const debounce = useDebounce;

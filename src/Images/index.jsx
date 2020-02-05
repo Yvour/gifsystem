@@ -1,22 +1,21 @@
 import { GiphyImage, PixabayImage } from "./source-images";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useEffect } from "./../useEffect";
 import { requester } from "./../requester";
-
 import { debounce } from "./../debounce";
 import { SOURCES } from "./../const";
 
 const EMPTY_ANSWER = [];
 const SEND_INTERVAL = 1000;
 
-const debouncedRequester = debounce(requester, 500);
-
 export default function Images(props) {
   const { search } = props;
-
+  const [requestValue] = debounce(search, 600);
   const [images, setImages] = useState(EMPTY_ANSWER);
+
   useEffect(() => {
-    if (search) {
-      requester(`query/${encodeURIComponent(search)}`)
+    if (requestValue) {
+      requester(`query/${encodeURIComponent(requestValue)}`)
         .then(response => response.json())
         .then(images => {
           setImages(images);
@@ -24,7 +23,7 @@ export default function Images(props) {
     } else {
       setImages(EMPTY_ANSWER);
     }
-  }, [search]);
+  }, [requestValue]);
 
   return (
     <div className="images-container">

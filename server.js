@@ -33,7 +33,7 @@ app.use(express.static(__dirname + "/www"));
 app.get("/query/:search", function(req, res) {
   const search = (req.params.search || "").split(/\s+/).join("+");
   const LIMIT = 25;
-  console.log("before query");
+
   Promise.all([
     fetch(
       `https://pixabay.com/api/?key=${API_KEYS.PIXABAY}&q=${encodeURIComponent(
@@ -61,7 +61,6 @@ app.get("/query/:search", function(req, res) {
   ])
     // for Promise.all
     .then(results => {
-      console.log("results are");
       const mixedArray = [];
       for (let i = 0; i < LIMIT; i++) {
         results.forEach(result => {
