@@ -16,6 +16,37 @@ SOURCES.forEach(source => {
 });
 
 const compiler = webpack(webpackConfig);
+const LIMIT = 25;
+
+function requestPixabayImages(search) {
+  return fetch(
+    `https://pixabay.com/api/?key=${API_KEYS.PIXABAY}&q=${encodeURIComponent(
+      search
+    )}&per_page=${LIMIT}`
+  )
+    .then(response => response.json())
+    .then(response => ({ source: "PIXABAY", items: response.hits }))
+    .catch(e => {
+      console.error(e);
+      console.log("zuk");
+      return { items: [] };
+    });
+}
+
+function requestGiphyImages(search) {
+  return fetch(
+    `https://api.giphy.com/v1/gifs/search?` +
+      `api_key=${API_KEYS.GIPHY}&q=${encodeURIComponent(search)}` +
+      `&limit=${LIMIT}&offset=0&rating=G&lang=en`
+  )
+    .then(response => response.json())
+    .then(response => ({ source: "GIPHY", items: response.data }))
+    .catch(e => {
+      console.error(e);
+      return { items: [] };
+    });
+}
+
 app.use(
   webpackDevMiddleware(compiler, {
     hot: true,
@@ -32,33 +63,8 @@ app.use(express.static(__dirname + "/www"));
 
 app.get("/query/:search", function(req, res) {
   const search = (req.params.search || "").split(/\s+/).join("+");
-  const LIMIT = 25;
 
-  Promise.all([
-    fetch(
-      `https://pixabay.com/api/?key=${API_KEYS.PIXABAY}&q=${encodeURIComponent(
-        search
-      )}&per_page=${LIMIT}`
-    )
-      .then(response => response.json())
-      .then(response => ({ source: "PIXABAY", items: response.hits }))
-      .catch(e => {
-        console.error(e);
-        console.log("zuk");
-        return { items: [] };
-      }),
-    fetch(
-      `https://api.giphy.com/v1/gifs/search?` +
-        `api_key=${API_KEYS.GIPHY}&q=${encodeURIComponent(search)}` +
-        `&limit=${LIMIT}&offset=0&rating=G&lang=en`
-    )
-      .then(response => response.json())
-      .then(response => ({ source: "GIPHY", items: response.data }))
-      .catch(e => {
-        console.error(e);
-        return { items: [] };
-      })
-  ])
+  Promise.all([requestPixabayImages(search), requestGiphyImages(search)])
     // for Promise.all
     .then(results => {
       const mixedArray = [];
@@ -77,24 +83,6 @@ app.get("/query/:search", function(req, res) {
     .then(array => {
       res.set("Content-Type", "application/json");
       res.send(array);
-    })
-    .catch(e => {
-      res.send([]);
-    });
-});
-
-app.get("/query-giphy/:search", function(req, res) {
-  const search = (req.params.search || "").split(/\s+/).join("+");
-
-  const KEY = API_KEYS.GIPHY;
-
-  const LIMIT = 25;
-  const url = fetch(url)
-    .then(response => response.json())
-
-    .then(response => {
-      res.set("Content-Type", "application/json");
-      res.send(response.data);
     })
     .catch(e => {
       res.send([]);
